@@ -79,7 +79,7 @@ public class PlaceOrderFormController {
 
     public void initialize() {
 
-        // Let's map columns with table model
+       
         tblOrderDetails.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("code"));
         tblOrderDetails.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("description"));
         tblOrderDetails.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("qty"));
@@ -101,7 +101,7 @@ public class PlaceOrderFormController {
             Logger.getLogger("lk.ijse.dep.pos.controller").log(Level.SEVERE, null,e);
         }
 
-        // When customer id is selected
+       
         cmbCustomerId.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -121,7 +121,6 @@ public class PlaceOrderFormController {
             }
         });
 
-        // When item code is selected
         cmbItemCode.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -153,7 +152,7 @@ public class PlaceOrderFormController {
             }
         });
 
-        // When a table row is selected
+     
         tblOrderDetails.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<OrderDetailTM>() {
             @Override
             public void changed(ObservableValue<? extends OrderDetailTM> observable, OrderDetailTM oldValue, OrderDetailTM newValue) {
@@ -196,7 +195,7 @@ public class PlaceOrderFormController {
     }
 
     private void reset() {
-        // Initialize controls to their default states
+     
         lblDate.setText(LocalDate.now() + "");
 
         btnPlaceOrder.setDisable(true);
@@ -298,7 +297,7 @@ public class PlaceOrderFormController {
         }
 
         updateQty(selectedItemCode, qty);
-        // Calculate the grand total
+        
         calculateTotal();
         enablePlaceOrderButton();
         cmbItemCode.requestFocus();
@@ -324,7 +323,6 @@ public class PlaceOrderFormController {
             total += detail.getTotal();
         }
 
-        // Let's format the total
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
@@ -342,13 +340,13 @@ public class PlaceOrderFormController {
 
         OrderDTO order = new OrderDTO(orderId, null, cmbCustomerId.getSelectionModel().getSelectedItem(), orderDetails);
         try {
-            orderBO.placeOrder(order);
-            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(this.getClass().getResourceAsStream("/lk/ijse/dep/pos/report/order-report.jasper"));
-            Map<String, Object> params = new HashMap<>();
-            params.put("orderId", orderId + "");
-            Session session = HibernateUtil.getSessionFactory().openSession();
-            session.doWork(connection -> {
-                JasperPrint jasperPrint = null;
+          orderBO.placeOrder(order);
+            // JasperReport jasperReport = (JasperReport) JRLoader.loadObject(this.getClass().getResourceAsStream("/lk/ijse/dep/pos/report/order-report.jasper"));
+            // Map<String, Object> params = new HashMap<>();
+            // params.put("orderId", orderId + "");
+            // Session session = HibernateUtil.getSessionFactory().openSession();
+            // session.doWork(connection -> {
+            //     JasperPrint jasperPrint = null;
                 try {
                     jasperPrint = JasperFillManager.fillReport(jasperReport, params, connection);
                 } catch (JRException e) {
@@ -378,13 +376,6 @@ public class PlaceOrderFormController {
         primaryStage.centerOnScreen();
     }
 
-/*    public void txtQty_OnKeyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ENTER){
-            if (!btnSave.isDisable()){
-                btnAdd_OnAction(null);
-            }
-        }
-    }*/
 
     public void txtQty_OnAction(ActionEvent actionEvent) {
         if (!btnSave.isDisable()) {
@@ -401,56 +392,4 @@ public class PlaceOrderFormController {
             btnPlaceOrder.setDisable(false);
         }
     }
-
-    /*
-    public void initializeForSearchOrderForm(String orderId) {
-
-        // Let's disable a few
-        btnPlaceOrder.setDisable(true);
-        btnSave.setDisable(true);
-        btnAddNewOrder.setDisable(true);
-        cmbCustomerId.setDisable(true);
-        cmbItemCode.setDisable(true);
-        txtQty.setDisable(true);
-
-        // Let's set read only flag to true
-        readOnly = true;
-
-        lblId.setText(orderId);
-
-        // Let's find the order
-        for (Order order : DB.orders) {
-            if (order.getOrderId().equals(orderId)) {
-
-                // Setting the order date
-                lblDate.setText(order.getOrderDate() + "");
-                // Setting the customer id, this will automatically set the customer name because we have already set a
-                // listener
-                cmbCustomerId.getSelectionModel().select(order.getCustomerId());
-
-                ObservableList<OrderDetailTM> orderDetails = tblOrderDetails.getItems();
-
-                for (OrderDetail od : order.getOrderDetails()) {
-
-                    // Let's find the item description
-                    String itemDescription = null;
-                    for (ItemTM item : DB.items) {
-                        if (item.getCode().equals(od.getItemCode())) {
-                            itemDescription = item.getDescription();
-                            break;
-                        }
-                    }
-                    orderDetails.add(new OrderDetailTM(od.getItemCode(), itemDescription,
-                            od.getQty(), od.getUnitPrice(),
-                            od.getQty() * od.getUnitPrice(), null));
-                }
-                calculateTotal();
-                tblOrderDetails.getSelectionModel().select(0);
-                break;
-            }
-        }
-     */
-    //============================ DB Related Codes =================================
-
-
 }

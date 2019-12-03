@@ -18,7 +18,7 @@ public class OrderDAOImpl extends CrudDAOImpl<Order, Integer> implements OrderDA
 
     @Override
     public boolean existsByCustomerId(String customerId) throws Exception {
-        return session.createNativeQuery("SELECT * FROM `Order` WHERE id=?1")
+        return session.createNativeQuery("SELECT * FROM `Order` WHERE customer_id=?1")
                 .setParameter(1, customerId).uniqueResult() != null;
     }
 }
